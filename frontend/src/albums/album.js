@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Image from '../image.js';
 
 import api_endpoint from '../config.js';
@@ -11,21 +11,22 @@ export default function Album(props) {
 
     const [uploadedAlbums, setUploadedAlbums] = useState([]);
 
-
-    const getState = () => {
-        return fetch(`${api_endpoint}/get/albums`, {
-            headers: {
-                'token': props.token
-            }
-        });
-    }
+    const getState = useCallback(
+        () => {
+            return fetch(`${api_endpoint}/get/albums`, {
+                headers: {
+                    'token': props.token
+                }
+            });
+        },
+        [props.token]);
 
     useEffect(() => {
         getState()
             .then(response => response.json())
             .then(data => setUploadedAlbums(data))
             .catch(error => console.error(error));
-    }, [])
+    }, [useCallback])
 
     let albumKeys = Object.keys(uploadedAlbums);
 

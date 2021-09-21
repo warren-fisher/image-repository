@@ -15,3 +15,8 @@ It is hosted at https://images.warrenfisher.net
 - React better display albums in groups
 - Prevent user from uploading the same file multiple times by spam clicking button
     - Response from clicking button?
+
+## Development
+
+- An uploads/albums folder must exist in the root
+- Different users should be able to upload the same named images perhaps?
