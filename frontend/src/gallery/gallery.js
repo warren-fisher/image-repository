@@ -31,7 +31,8 @@ export default function Gallery(props) {
 
     return (
         <div id="imgs">
-            { uploadedFiles.map((object, i) => <Image image_name={object} key={i}/>) }
+            { Object.keys(uploadedFiles).map((image, i) =>
+                (<Image image_name={image} ours={uploadedFiles[image]["ours"]} key={i}/>))}
         </div>
     );
 }

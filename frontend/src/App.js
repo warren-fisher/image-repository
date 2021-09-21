@@ -31,7 +31,7 @@ function App() {
                 { token ?
 
                     <h2>Logged in as {loggedInUser}
-                        <a href="#" id="logout" onClick={()=> {setToken(undefined)}}>Logout</a>
+                        <button id="logout" onClick={()=> {setToken(undefined)}}>Logout</button>
                     </h2>
                     :
                     <h2><Link to={{ pathname: "/login", }}> Login</Link></h2>

@@ -129,14 +129,19 @@ def upload_album():
 
     return jsonify("success")
 
+# 
 @app.route('/get/files', methods=['GET'])
 def get_files():
     token = decode_token(request)
 
     filenames = sql.get_files(token['user_code'])
+    
+    print(token['user_code'])
+    print(filenames)
 
     return jsonify(filenames)
 
+# 
 @app.route('/get/albums', methods=['GET'])
 def get_albums():
 

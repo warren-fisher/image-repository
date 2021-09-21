@@ -41,13 +41,12 @@ export default function Album(props) {
                 return (
                     <div className="album" key={i}>
                     <Card title={album === "undefined" ? "Public album" : album} sectioned>
-                        {uploadedAlbums[album].map((image_name, j) => <Image image_name={image_name} key={j} album_name={album}/>)}
+                        { Object.keys(uploadedAlbums[album]).map((image, j) =>
+                            (<Image image_name={image} ours={uploadedAlbums[album][image]["ours"]} album_name={album} key={i*j+j}/>))}
                     </Card>
                     </div>
                 );
-
-            }
-            )}
+            })}
 
         </div>
     );

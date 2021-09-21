@@ -11,17 +11,18 @@ def get_files(user_code=None):
     """Get all files that a user can view"""
 
     if user_code is None:
-        s = text("""SELECT P_NAME FROM photos WHERE P_PRIVATE = 0 AND A_ID IS NULL""")
+        s = text("""SELECT P_NAME, U_CODE FROM photos WHERE P_PRIVATE = 0 AND A_ID IS NULL""")
         result = engine.connect().execute(s)
 
-    s = text("""SELECT P_NAME FROM photos WHERE (P_PRIVATE = 0 OR U_CODE = :x) AND A_ID IS NULL""")
+    s = text("""SELECT P_NAME, U_CODE FROM photos WHERE (P_PRIVATE = 0 OR U_CODE = :x) AND A_ID IS NULL""")
     result = engine.connect().execute(s, x=user_code)
 
-    files = []
-
+    files = {}
+    
     for row in result:
-        files.append(row[0])
+        files[row[0]] = {'ours': (True if (user_code and row[1]==user_code) else False)}
 
+    # Returns dictionary filename -> {private: boolean}
     return files
 
 def get_albums(user_code=None):
@@ -32,14 +33,12 @@ def get_albums(user_code=None):
         username {string} -- The user accessing the albums
     """
 
-    print(user_code)
-
     if user_code is None:
-        s = text("""SELECT A_NAME, P_NAME FROM albums INNER JOIN photos ON albums.A_ID = photos.A_ID
+        s = text("""SELECT A_NAME, P_NAME, photos.U_CODE FROM albums INNER JOIN photos ON albums.A_ID = photos.A_ID
              WHERE P_PRIVATE = 0""")
         result = engine.connect().execute(s)
     else:
-        s = text("""SELECT A_NAME, P_NAME FROM albums INNER JOIN photos ON albums.A_ID = photos.A_ID
+        s = text("""SELECT A_NAME, P_NAME, photos.U_CODE FROM albums INNER JOIN photos ON albums.A_ID = photos.A_ID
                 WHERE P_PRIVATE = 0 OR photos.U_CODE = :x""")
         result = engine.connect().execute(s, x=user_code)
 
@@ -49,9 +48,11 @@ def get_albums(user_code=None):
         try:
             albums[row[0]]
         except KeyError:
-            albums[row[0]] = []
+            albums[row[0]] = {}
 
-        albums[row[0]].append(row[1])
+        albums[row[0]][row[1]] = {'ours': (True if (user_code and row[2]==user_code) else False)}
+        
+    # Returns dictionary albumname -> dictionary of filename -> {private: boolean}
     return albums
 
 def get_user_code(username):

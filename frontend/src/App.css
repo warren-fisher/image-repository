@@ -81,9 +81,21 @@ h2 span {
   padding: 20px;
 }
 
+/* Style this logout button like a link */
+
 #logout 
 {
   text-decoration: underline;
   padding: 10px;
   margin: 10px;
+
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
 }

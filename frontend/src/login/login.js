@@ -140,8 +140,8 @@ function Login(props) {
                 </label>
 
                 <label>
-                    <p>Enter a password atleast 8 characters long</p>
-                    <input className={validPassword === true ? "valid" : "invalid"} type="text" onChange={e => setPassword(e.target.value)}/>
+                    <p>Enter a password at least 8 characters long</p>
+                    <input className={validPassword === true ? "valid" : "invalid"} type="password" onChange={e => setPassword(e.target.value)}/>
                 </label>
 
                 <div>
