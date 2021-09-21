@@ -1,5 +1,7 @@
 import api_endpoint from './config.js';
 
+import {MediaCard} from '@shopify/polaris';
+
 /**
  * Function component for displaying an image
  *
@@ -18,7 +20,15 @@ function Image(props) {
 
     return (
         <div class="image-container">
-        <img src={`${url}/${props.image_name}`} />
+            <MediaCard
+                title={props.image_name}
+            >
+                <img src={`${url}/${props.image_name}`} alt={props.image_name} width="100%" height="100%"     
+                    style={{
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                    }}/>
+            </MediaCard>
         </div>
     )
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from '../image.js';
 
+import {Card} from '@shopify/polaris';
+
 import api_endpoint from '../config.js';
 
 /**
@@ -38,7 +40,9 @@ export default function Album(props) {
 
                 return (
                     <div className="album" key={i}>
-                    {uploadedAlbums[album].map((image_name, j) => <Image image_name={image_name} key={j} album_name={album}/>)}
+                    <Card title={album == "undefined" ? "Public album" : album} sectioned>
+                        {uploadedAlbums[album].map((image_name, j) => <Image image_name={image_name} key={j} album_name={album}/>)}
+                    </Card>
                     </div>
                 );
 

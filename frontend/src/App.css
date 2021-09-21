@@ -68,11 +68,15 @@ h2 span {
     justify-content: space-around;
 }
 
-img {
-    max-width: 80%;
-    height: auto;
+.image-container {
+  max-width: 70vw;
+  margin: auto;
+  padding: 20px;
 }
 
-.img-container {
-    width: 75%;
+.album 
+{
+  max-width: 80vw;
+  margin: auto;
+  padding: 20px;
 }
