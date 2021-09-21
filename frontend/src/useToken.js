@@ -8,7 +8,7 @@ export default function useToken() {
     const getToken = () => {
         const JSONToken = sessionStorage.getItem('token');
 
-        if (JSONToken != "undefined") {
+        if (JSONToken !== null) {
             const token = JSON.parse(JSONToken);
             return token?.token
         }

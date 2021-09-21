@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import React from 'react';
 import {useHistory} from "react-router-dom";
 
@@ -7,7 +7,6 @@ import './login.css'
 import api_endpoint from '../config.js';
 
 async function loginUser(username, hash) {
-
     const formData = new FormData();
     formData.append('user', username);
     formData.append('hash', hash);
@@ -19,7 +18,6 @@ async function loginUser(username, hash) {
 }
 
 async function registerUser(username, hash) {
-
     const formData = new FormData();
     formData.append('user', username);
     formData.append('hash', hash);
@@ -52,7 +50,7 @@ async function checkUser(username) {
  * @param {func} props.setUser, function to set the logged in user's name
  *                  Only purpose is for visual display, the token is used for identity verification
  */
-export default function Login(props) {
+function Login(props) {
 
     // State for username and password
     const [username, setUserName] = useState();
@@ -121,14 +119,14 @@ export default function Login(props) {
         }
     }
 
-    const passwordCheck = () => {
-
-        if (password == undefined || password.length < 8) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+    const passwordCheck = useCallback(() =>
+        {
+            if (password === undefined || password.length < 8) {
+                return false;
+            } else {
+                return true;
+            }
+        }, [password]);
 
     return (
         <div id="login-wrapper">
@@ -138,12 +136,12 @@ export default function Login(props) {
 
                 <label>
                     <p>Username</p>
-                    <input className={validUser == true ? "valid" : "invalid"} type="text" onChange={e => setUserName(e.target.value)}/>
+                    <input className={validUser === true ? "valid" : "invalid"} type="text" onChange={e => setUserName(e.target.value)}/>
                 </label>
 
                 <label>
                     <p>Enter a password atleast 8 characters long</p>
-                    <input className={validPassword == true ? "valid" : "invalid"} type="text" onChange={e => setPassword(e.target.value)}/>
+                    <input className={validPassword === true ? "valid" : "invalid"} type="text" onChange={e => setPassword(e.target.value)}/>
                 </label>
 
                 <div>
@@ -159,3 +157,5 @@ export default function Login(props) {
         </div>
     );
 }
+
+export default Login;

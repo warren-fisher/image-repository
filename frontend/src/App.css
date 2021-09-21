@@ -80,3 +80,10 @@ h2 span {
   margin: auto;
   padding: 20px;
 }
+
+#logout 
+{
+  text-decoration: underline;
+  padding: 10px;
+  margin: 10px;
+}

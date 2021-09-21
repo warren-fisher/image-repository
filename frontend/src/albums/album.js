@@ -28,7 +28,7 @@ export default function Album(props) {
             .then(response => response.json())
             .then(data => setUploadedAlbums(data))
             .catch(error => console.error(error));
-    }, [useCallback])
+    }, [getState])
 
     let albumKeys = Object.keys(uploadedAlbums);
 
@@ -40,7 +40,7 @@ export default function Album(props) {
 
                 return (
                     <div className="album" key={i}>
-                    <Card title={album == "undefined" ? "Public album" : album} sectioned>
+                    <Card title={album === "undefined" ? "Public album" : album} sectioned>
                         {uploadedAlbums[album].map((image_name, j) => <Image image_name={image_name} key={j} album_name={album}/>)}
                     </Card>
                     </div>

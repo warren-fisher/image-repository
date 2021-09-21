@@ -19,7 +19,7 @@ function Image(props) {
     }
 
     return (
-        <div class="image-container">
+        <div className="image-container">
             <MediaCard
                 title={props.image_name}
             >

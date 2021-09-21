@@ -176,7 +176,7 @@ def is_available_check(result):
         is_available = False
         break
 
-    return {'available': is_available}
+    return is_available
 
 def check_user_name(username):
     """
@@ -192,7 +192,7 @@ def check_user_name(username):
 
 def check_album_name(album_name):
     """
-    Check if a username is available for use
+    Check if an album name is available for use
 
     Arguments:
         album_name {string} -- The album name
@@ -204,12 +204,12 @@ def check_album_name(album_name):
 
 def check_photo_name(photo_name):
     """
-    Check if a username is available for use
+    Check if a photo name is available for use
 
     Arguments:
         photo_name {string} -- The photo name
     """
-    s = text("""SELECT * FROM photos where P_NAME like :x""")
+    s = text("""SELECT * FROM photos where P_NAME like :x AND A_ID IS NULL""")
 
     result = engine.connect().execute(s, x=photo_name)
     return is_available_check(result)

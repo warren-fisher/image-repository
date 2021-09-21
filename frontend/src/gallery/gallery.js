@@ -1,6 +1,8 @@
 import React, { useEffect , useState} from 'react';
 import Image from '../image.js';
 
+import {useCallback} from 'react';
+
 import api_endpoint from '../config.js';
 
 /**
@@ -11,22 +13,21 @@ export default function Gallery(props) {
 
     const [uploadedFiles, setUploadedFiles] = useState([]);
 
-
-    const getState = () => {
+    const getState = useCallback(()=>
+    {
         return fetch(`${api_endpoint}/get/files`, {
             headers: {
                 'token': props.token
             }
         });
-    }
+    }, [props.token]);
 
     useEffect(() => {
         getState()
             .then(response => response.json())
             .then(data => setUploadedFiles(data))
             .catch(error => console.error(error));
-    }, [])
-
+    }, [getState]);
 
     return (
         <div id="imgs">

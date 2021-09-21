@@ -3,7 +3,7 @@ from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
 from flask_cors import CORS, cross_origin
-from flask import jsonify
+from flask import jsonify, Response
 
 from cred_secret import key
 
@@ -63,15 +63,6 @@ def uploaded_file_in_album(album, filename):
     path = os.path.join(app.config['UPLOAD_FOLDER'], app.config['ALBUM_FOLDER'], album)
     return send_from_directory(path, filename)
 
-def save_file(file, path):
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-
-        available = check_photo_name(filename)
-
-        file.save(os.path.join(path, filename))
-
-# TODO: filename conflicts, order of saving file and sql record
 @app.route('/post/upload', methods=['POST'])
 def upload():
     if request.method == 'POST':
@@ -89,12 +80,16 @@ def upload():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            
+            if (not sql.check_photo_name(filename)):
+                # This photo name is already in use
+                return Response("{duplicate_photo}", status=409, mimetype='application/json')
 
             sql.create_file_record(filename, isPrivate, token['user_code'])
-
+            
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        return jsonify([])
+        return jsonify("success")
 
 # TODO: filename conflicts, order of saving file and sql record
 @app.route('/post/upload/album', methods=['POST'])
@@ -127,11 +122,12 @@ def upload_album():
         for f in files:
             if f and allowed_file(f.filename):
                 filename = secure_filename(f.filename)
+                
                 # TODO what if a file is a duplicate name (within this album)
                 sql.create_file_record(filename, isPrivate, token['user_code'], album_code)
                 f.save(os.path.join(path, filename))
 
-    return jsonify([])
+    return jsonify("success")
 
 @app.route('/get/files', methods=['GET'])
 def get_files():
@@ -160,12 +156,10 @@ def login():
 
     if res == 'failure':
         # invalid
-        print('fail')
         return jsonify([])
     else:
         # success
         token = get_token(username)
-        print(token)
         return jsonify(token)
 
 @app.route('/post/register', methods=['POST'])
@@ -182,12 +176,11 @@ def register():
     else:
         # success
         token = get_token(username)
-        print(token)
         return jsonify(token)
 
 @app.route('/get/username/<name>')
 def check_if_name_available(name):
-    return jsonify(sql.check_user_name(name))
+    return jsonify({'available':sql.check_user_name(name)})
 
 @app.route('/post/create/user/<name>/<hash>')
 def create_user(name, hash):
