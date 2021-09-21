@@ -4,7 +4,7 @@ import Upload from './upload/upload.js';
 
 import Gallery from './gallery/gallery.js';
 
-import Album from './albums/album.js';
+import Albums from './albums/albums.js';
 
 import Login from './login/login.js';
 
@@ -30,9 +30,8 @@ function App() {
                 {/* Only display the login link if the user is not logged in*/}
                 { token ?
 
-                    <h2>Logged in as {loggedInUser}
-                        <button id="logout" onClick={()=> {setToken(undefined)}}>Logout</button>
-                    </h2>
+                    <><h2>Logged in as {loggedInUser}</h2>
+                    <button id="logout" onClick={()=> {setToken(undefined)}}>Logout</button></>
                     :
                     <h2><Link to={{ pathname: "/login", }}> Login</Link></h2>
                 }
@@ -49,7 +48,7 @@ function App() {
                     </Route>
 
                     <Route path="/albums">
-                        <Album token={token}/>
+                        <Albums token={token}/>
 
                     </Route>
 

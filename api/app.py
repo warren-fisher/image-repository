@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, send_from_directory
+from flask import Flask, flash, json, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
 from flask_cors import CORS, cross_origin
@@ -55,8 +55,7 @@ def allowed_folder(foldername):
 
 @app.route('/get/files/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/get/albums/<album>/<filename>')
 def uploaded_file_in_album(album, filename):
@@ -129,7 +128,7 @@ def upload_album():
 
     return jsonify("success")
 
-# 
+# Get all the files this user can see
 @app.route('/get/files', methods=['GET'])
 def get_files():
     token = decode_token(request)
@@ -141,7 +140,7 @@ def get_files():
 
     return jsonify(filenames)
 
-# 
+# Get all the albums this user can see
 @app.route('/get/albums', methods=['GET'])
 def get_albums():
 
@@ -150,6 +149,42 @@ def get_albums():
     albums = sql.get_albums(token['user_code'])
 
     return jsonify(albums)
+
+@app.route('/delete/file/<string:filename>', methods=['DELETE'])
+def delete_file(filename):
+    token = decode_token(request)
+
+    if (sql.delete_file_record(filename, token['user_code'])):
+        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        os.remove(path)
+        return jsonify(True)
+        
+    else:
+        # Uh oh! Wrong permissions or no file
+        return Response("{cannot_delete}", status=403, mimetype='application/json')
+    
+@app.route('/delete/file/from_album/<string:album>/<string:filename>', methods=['DELETE'])
+def delete_album_file(album, filename):
+    token = decode_token(request)
+    
+    res = sql.delete_file_album_record(album, filename, token['user_code'])
+
+    # delete the file
+    if (res[0]):
+        path = os.path.join(app.config['UPLOAD_FOLDER'], app.config['ALBUM_FOLDER'], album, filename)
+
+        os.remove(path)
+        
+        # delete the folder
+        if (res[1]):
+            os.rmdir(os.path.join(app.config['UPLOAD_FOLDER'], app.config['ALBUM_FOLDER'], album))
+            
+        return jsonify(True)
+    else:
+        # Uh oh! Wrong permissions or no file
+        return Response("{cannot_delete}", status=403, mimetype='application/json')
+
 
 @app.route('/post/login', methods=['POST'])
 def login():

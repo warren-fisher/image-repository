@@ -130,7 +130,7 @@ function Login(props) {
 
     return (
         <div id="login-wrapper">
-            <h3> Please login </h3>
+            <h3> Please login or register </h3>
 
             <form>
 

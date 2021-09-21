@@ -6,7 +6,6 @@ import {useCallback} from 'react';
 import api_endpoint from '../config.js';
 
 /**
- *
  * @param {str} props.token, the user token
  */
 export default function Gallery(props) {
@@ -32,7 +31,7 @@ export default function Gallery(props) {
     return (
         <div id="imgs">
             { Object.keys(uploadedFiles).map((image, i) =>
-                (<Image image_name={image} ours={uploadedFiles[image]["ours"]} key={i}/>))}
+                (<Image token={props.token} image_name={image} ours={uploadedFiles[image]["ours"]} key={i}/>))}
         </div>
     );
 }

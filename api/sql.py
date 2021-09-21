@@ -55,6 +55,55 @@ def get_albums(user_code=None):
     # Returns dictionary albumname -> dictionary of filename -> {private: boolean}
     return albums
 
+def delete_file_record(filename, user_code):
+    """
+    Delete a file's record from the database if the user owns it
+
+    Arguments:
+        filename {string} -- the filename to delete
+        user_code {int} -- the users code in the database
+    Returns:
+        {bool} if the user was allowed to delete that file or not
+    """
+    if user_code is None:
+        return False
+        
+    s = text("""DELETE FROM photos WHERE A_ID IS NULL AND P_NAME = :x AND U_CODE = :y""")
+    result = engine.connect().execute(s, x=filename, y=user_code)
+        
+    return (True if result.rowcount else False)
+
+def delete_file_album_record(albumname, filename, user_code):
+    """
+    Delete a file from an album if ther user owns it
+
+    Arguments:
+        albumname {string} -- the album to delete from
+        filename {string} -- the filename to delete
+        user_code {int} -- the users code in the database
+    Returns:
+        {bool} if the user was allowed to delete that file or not
+    """
+    if user_code is None:
+        return False
+        
+    s = text("""DELETE photos FROM photos JOIN albums USING(A_ID) WHERE A_NAME = :x AND P_NAME = :y AND photos.U_CODE = :z""")
+    result = engine.connect().execute(s, x=albumname, y=filename, z=user_code)
+    
+    if (result.rowcount):
+        # Left join so we get stuff in albums not in photos
+        # Only select stuff which dont have a photo name, ie empty album
+        # Delete that album if correct user permissions
+        s = text("""DELETE albums FROM albums LEFT JOIN photos USING(A_ID) WHERE P_NAME IS NULL 
+                    AND albums.U_CODE = :x AND albums.A_NAME = :y""")                     
+        result = engine.connect().execute(s, x=user_code, y=albumname)
+        
+        # File deleted, album deleted
+        return (True, (True if result.rowcount else False))
+    
+    # File delete, album delete (neither)
+    return (False, False)
+
 def get_user_code(username):
     """
     Get a user's ID code
